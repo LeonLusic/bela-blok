@@ -15,14 +15,14 @@ app.layout = dbc.Container(
             [
                 dbc.Col(
                     html.Div(
-                        id="score1",
+                        id="container_score_team_a",
                         children="0",
                         className="p-3 mb-2 bg-success text-white text-center",
                     )
                 ),
                 dbc.Col(
                     html.Div(
-                        id="score2",
+                        id="container_score_team_b",
                         children="0",
                         className="p-3 mb-2 bg-danger text-white text-center",
                     )
@@ -61,87 +61,74 @@ app.layout = dbc.Container(
             justify="between",
             className="my-3",
         ),
+        dcc.Store(id="selected_team", data="team_a"),
+        dcc.Store(id="score_team_a", data=0),
+        dcc.Store(id="score_team_b", data=0),
     ],
     fluid=True,
     style={"max-width": "500px", "margin": "0 auto", "padding": "20px"},
 )
 
 
-@app.callback(
-    Output("score1", "children"),
-    Output("score2", "children"),
-    Output("sum1", "children"),
-    Output("sum2", "children"),
-    [
-        Input("button-20", "n_clicks"),
-        Input("button-50", "n_clicks"),
-        Input("button-100", "n_clicks"),
-        Input("button-150", "n_clicks"),
-        Input("button-200", "n_clicks"),
-    ],
-    [State("score1", "children"), State("score2", "children")],
-)
-def update_scores(b20, b50, b100, b150, b200, score1, score2):
-    ctx = dash.callback_context
-    if not ctx.triggered:
-        return score1, score2, "Σ 0", "Σ 0"
-    else:
-        button_id = ctx.triggered[0]["prop_id"].split(".")[0]
-
-        if button_id == "button-20":
-            score1 = int(score1) + 20
-        elif button_id == "button-50":
-            score1 = int(score1) + 50
-        elif button_id == "button-100":
-            score1 = int(score1) + 100
-        elif button_id == "button-150":
-            score1 = int(score1) + 150
-        elif button_id == "button-200":
-            score1 = int(score1) + 200
-
-    sum1 = f"Σ {score1}"
-    sum2 = f"Σ {score2}"
-    return score1, score2, sum1, sum2
-
 
 @app.callback(
-    outputs=[
-        Output("score1", "children"),
-        Output("score2", "children"),
-        Output("sum1", "children"),
-        Output("sum2", "children"),
-    ],
-    inputs=components.POINTS_INPUTS,
-    states=[State("score1", "children"), State("score2", "children")],
+    Output("score_team_a", "data", allow_duplicate=True),
+    Output("score_team_b", "data", allow_duplicate=True),
+    [components.POINTS_INPUTS],
+    [[State("score_team_a", "data"), State("score_team_b", "data")]],
+    prevent_initial_call=True,
 )
 def update_points(inputs: list[Input], states: list[State]) -> None:
     ctx = dash.callback_context
-    if not ctx.triggered:
+    if ctx.triggered[0]["value"] is None:
         return 0, 0
 
     button_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
-    if button_id == "button-20":
-        score1 = int(score1) + 20
-    elif button_id == "button-50":
-        score1 = int(score1) + 50
-    elif button_id == "button-100":
-        score1 = int(score1) + 100
-    elif button_id == "button-150":
-        score1 = int(score1) + 150
-    elif button_id == "button-200":
-        score1 = int(score1) + 200
+    number = int(button_id.split("-")[-1])
 
-    return score1, score2
+    score_a, _ = states
+
+    if len(str(score_a)) == 3:
+        return score_a, 162 - score_a
+    
+    new_score_a = min(162, int(str(score_a) + str(number)))
+    new_score_b = max(0, 162 - new_score_a)
+
+    return new_score_a, new_score_b
 
 
-# @app.callback(
-#     None,
-#     [Input("button-spremi", "n_clicks")],
-#     [State("score1", "children"), State("score2", "children")],
-# )
-# def save_round():
-#     pass
+@app.callback(
+    Output("score_team_a", "data", allow_duplicate=True),
+    Output("score_team_b", "data", allow_duplicate=True),
+    [Input("backspace", "n_clicks")],
+    [[State("score_team_a", "data"), State("score_team_b", "data")]],
+    prevent_initial_call=True
+)
+def backspace_points(inputs: list[Input], states: list[State]) -> None:
+    ctx = dash.callback_context
+    if ctx.triggered[0]["value"] is None:
+        return states
+
+    score_a, _ = states
+
+    if score_a < 10:
+        return 0, 162
+    
+    new_score_a = max(0, int(str(score_a)[:-1]))
+    new_score_b = min(162, 162 - new_score_a)
+
+    return new_score_a, new_score_b
+
+@app.callback(
+    Output("container_score_team_a", "children", allow_duplicate=True),
+    Output("container_score_team_b", "children", allow_duplicate=True),
+    [Input("score_team_a", "data"), Input("score_team_b", "data")],
+    prevent_initial_call=True,
+    allow_duplicate=True
+)
+def update_score_container(score_team_a: int, score_team_b: int) -> tuple:
+    return score_team_a, score_team_b
 
 
 if __name__ == "__main__":

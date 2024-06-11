@@ -2,10 +2,10 @@ import dash_bootstrap_components as dbc
 
 from dataclasses import dataclass
 
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input
 
 
-POINTS_INPUTS = [Input(f"num-{index}", "value") for index in range(10)]
+POINTS_INPUTS = [Input(f"num-{index}", "n_clicks") for index in range(10)]
 
 
 @dataclass
