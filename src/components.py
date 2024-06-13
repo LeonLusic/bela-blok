@@ -1,9 +1,7 @@
-import dash_bootstrap_components as dbc
-
 from dataclasses import dataclass
 
+import dash_bootstrap_components as dbc
 from dash.dependencies import Input
-
 
 POINTS_INPUTS = [Input(f"num-{index}", "n_clicks") for index in range(10)]
 
@@ -32,18 +30,30 @@ def make_zvanja_input() -> dbc.Row:
 
 
 def numpad() -> dbc.Row:
+    def numpad_button(children: str, id: str) -> dbc.Button:
+        return dbc.Button(
+            children,
+            id=id,
+            n_clicks=0,
+            className="m-1",
+            style={
+                "width": "100%",
+                "height": "100%",
+                "padding": "10px",
+                "border": "1px solid black",
+                "backgroundColor": "#f8f9fa",  # Off-white color
+                "color": "black",  # Text color
+            },
+        )
+
     rows = []
     for row_number in range(3):
         cols = []
         for col_number in range(1, 4):
             input_number = 3 * row_number + col_number
             col = dbc.Col(
-                dbc.Button(
-                    str(input_number),
-                    id=f"num-{input_number}",
-                    n_clicks=0,
-                    className="m-1",
-                )
+                numpad_button(children=str(input_number), id=f"num-{input_number}"),
+                width=4,
             )
             cols.append(col)
 
@@ -51,9 +61,9 @@ def numpad() -> dbc.Row:
 
     zero_row = dbc.Row(
         [
-            dbc.Col(dbc.Button("", id="empty-button", n_clicks=0, class_name="m-1")),
-            dbc.Col(dbc.Button("0", id="num-0", n_clicks=0, class_name="m-1")),
-            dbc.Col(dbc.Button("<", id="backspace", n_clicks=0, class_name="m-1")),
+            dbc.Col(numpad_button(children="", id="empty-button"), width=4),
+            dbc.Col(numpad_button(children="0", id="num-0"), width=4),
+            dbc.Col(numpad_button(children="<", id="backspace"), width=4),
         ]
     )
 
