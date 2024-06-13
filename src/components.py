@@ -13,19 +13,46 @@ class Zvanje:
 
 
 def make_zvanja_input() -> dbc.Row:
+    def _button_cell(children: str, id: str) -> dbc.Col:
+        return dbc.Col(
+            dbc.Button(
+                children,
+                id=id,
+                n_clicks=0,
+                style={
+                    "width": "100%",
+                    "height": "100%",
+                    "border": "1px solid black",
+                    "backgroundColor": "#f8f9fa",
+                    "color": "black",
+                },
+            )
+        )
+
     return dbc.Row(
         [
-            dbc.Col(dbc.Button("20", id="button-20", n_clicks=0, className="m-1")),
-            dbc.Col(dbc.Button("50", id="button-50", n_clicks=0, className="m-1")),
-            dbc.Col(dbc.Button("100", id="button-100", n_clicks=0, className="m-1")),
-            dbc.Col(dbc.Button("150", id="button-150", n_clicks=0, className="m-1")),
-            dbc.Col(dbc.Button("200", id="button-200", n_clicks=0, className="m-1")),
-            dbc.Col(
-                dbc.Button("štiglja", id="button-štiglja", n_clicks=0, className="m-1")
+            dbc.Row(
+                [
+                    _button_cell("20", "button-20"),
+                    _button_cell("50", "button-50"),
+                    _button_cell("100", "button-100"),
+                ],
+                justify="center",
+            ),
+            dbc.Row(
+                [
+                    _button_cell("150", "button-150"),
+                    _button_cell("200", "button-200"),
+                    _button_cell("Štiglja", "button-štiglja"),
+                ],
+                justify="center",
             ),
         ],
         justify="center",
-        className="my-3",
+        style={
+            "backgroundColor": "#e8eae9",
+            "padding": "10px",
+        },
     )
 
 
