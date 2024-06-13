@@ -3,11 +3,18 @@ import dash_bootstrap_components as dbc
 from dash import dcc, html
 from dash.dependencies import Input, Output, State
 
+from enum import StrEnum, auto
 import components
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 MAX_SCORE = 162
+
+
+class Team(StrEnum):
+    TEAM_A = auto()
+    TEAM_B = auto()
+
 
 app.layout = dbc.Container(
     [
@@ -16,7 +23,7 @@ app.layout = dbc.Container(
         components.make_zvanja_input(),
         components.numpad(),
         components.round_select_buttons(),
-        dcc.Store(id="selected_team", data="team_a"),
+        dcc.Store(id="selected_team", data=Team.TEAM_A),
         dcc.Store(id="score_team_a", data=0),
         dcc.Store(id="score_team_b", data=0),
         dcc.Store(id="extra_points_team_a", data=0),
@@ -28,14 +35,80 @@ app.layout = dbc.Container(
 
 
 @app.callback(
+    [
+        Output("container_score_team_a", "style", allow_duplicate=True),
+        Output("container_score_team_b", "style", allow_duplicate=True),
+    ],
+    [Input("selected_team", "data")],
+    [
+        State("container_score_team_a", "style"),
+        State("container_score_team_b", "style"),
+    ],
+    prevent_initial_call=True,
+)
+def update_button_style(selected_team: Team, green_style: dict, red_style: dict):
+    highlighted_border_css = "4px solid #000000"
+    normal_border = "4px"
+
+    if selected_team == Team.TEAM_A:
+        green_style["border"] = highlighted_border_css
+        red_style["border"] = normal_border
+
+    if selected_team == Team.TEAM_B:
+        green_style["border"] = normal_border
+        red_style["border"] = highlighted_border_css
+
+    return green_style, red_style
+
+
+@app.callback(
+    Output("selected_team", "data"),
+    [
+        Input("container_score_team_a", "n_clicks"),
+        Input("container_score_team_b", "n_clicks"),
+    ],
+    prevent_initial_call=True,
+)
+def update_selected_team(n_clicks_a: int, n_clicks_b: int):
+    ctx = dash.callback_context
+    clicked_button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+
+    if clicked_button_id == "container_score_team_a":
+        return Team.TEAM_A
+
+    if clicked_button_id == "container_score_team_b":
+        return Team.TEAM_B
+
+
+@app.callback(
+    [
+        Output("selected_team", "data", allow_duplicate=True),
+        Output("score_team_a", "data", allow_duplicate=True),
+        Output("score_team_b", "data", allow_duplicate=True),
+        Output("extra_points_team_a", "data", allow_duplicate=True),
+        Output("extra_points_team_b", "data", allow_duplicate=True),
+        Output("container_score_team_a", "children", allow_duplicate=True),
+        Output("container_score_team_b", "children", allow_duplicate=True),
+    ],
+    Input("button-odustani", "n_clicks"),
+    prevent_initial_call=True,
+)
+def reset(n_clicks: int) -> tuple:
+    return Team.TEAM_A, 0, 0, 0, 0, "0", "0"
+
+
+@app.callback(
     Output("extra_points_team_a", "data", allow_duplicate=True),
     Output("extra_points_team_b", "data", allow_duplicate=True),
     [components.EXTRA_POINTS_INPUTS],
-    [[State("extra_points_team_a", "data"), State("extra_points_team_b", "data")]],
+    [
+        [State("extra_points_team_a", "data"), State("extra_points_team_b", "data")],
+        State("selected_team", "data"),
+    ],
     prevent_initial_call=True,
 )
 def update_extra_points(
-    inputs: list[Input], current_extra_scores: list[State]
+    inputs: list[Input], current_extra_scores: list[State], selected_team: str
 ) -> tuple[int, int]:
     ctx = dash.callback_context
     app.logger.info(current_extra_scores)
@@ -51,8 +124,13 @@ def update_extra_points(
 
     extra_points = int(button_id.split("-")[-1])
 
-    new_score_a = extra_points_a + extra_points
-    new_score_b = extra_points_b
+    if selected_team == Team.TEAM_A:
+        new_score_a = extra_points_a + extra_points
+        new_score_b = extra_points_b
+
+    if selected_team == Team.TEAM_B:
+        new_score_a = extra_points_a
+        new_score_b = extra_points_b + extra_points
 
     return new_score_a, new_score_b
 
@@ -132,7 +210,7 @@ def backspace_points(inputs: list[Input], states: list[State]) -> None:
 def update_score_container(
     score_team_a: int, score_team_b: int, extra_points_a: int, extra_points_b: int
 ) -> tuple:
-    return score_team_a + extra_points_a, score_team_b + extra_points_b
+    return f"{score_team_a} + {extra_points_a}", f"{score_team_b} + {extra_points_b}"
 
 
 if __name__ == "__main__":

@@ -177,18 +177,44 @@ def score_containers() -> dbc.Row:
     return dbc.Row(
         [
             dbc.Col(
-                html.Div(
+                dbc.Button(
+                    "0",
                     id="container_score_team_a",
-                    children="0",
-                    className="p-3 mb-2 bg-success text-white text-center",
-                )
+                    style={
+                        "width": "100%",
+                        "height": "100%",
+                        "font-size": "20px",
+                        "border": "4px solid #000000",
+                        "backgroundColor": "#2F974B",
+                        "color": "black",
+                        "display": "flex",
+                        "justify-content": "center",
+                        "align-items": "center",
+                        "margin": "auto",
+                    },
+                ),
+                width=6,
+                style={"display": "flex", "justify-content": "center"},
             ),
             dbc.Col(
-                html.Div(
+                dbc.Button(
+                    "0",
                     id="container_score_team_b",
-                    children="0",
-                    className="p-3 mb-2 bg-danger text-white text-center",
-                )
+                    style={
+                        "width": "100%",
+                        "height": "100%",
+                        "font-size": "20px",
+                        "border": "4px",
+                        "backgroundColor": "#F03A3A",
+                        "color": "black",
+                        "display": "flex",
+                        "justify-content": "center",
+                        "align-items": "center",
+                        "margin": "auto",
+                    },
+                ),
+                width=6,
+                style={"display": "flex", "justify-content": "center"},
             ),
         ],
         justify="center",
