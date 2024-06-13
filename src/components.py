@@ -4,6 +4,9 @@ import dash_bootstrap_components as dbc
 from dash import html
 from dash.dependencies import Input
 
+EXTRA_POINTS_INPUTS = [
+    Input(f"button-{num}", "n_clicks") for num in [20, 50, 100, 150, 200]
+] + [Input("button-štiglja", "n_clicks")]
 POINTS_INPUTS = [Input(f"num-{index}", "n_clicks") for index in range(10)]
 
 
@@ -109,17 +112,54 @@ def round_select_buttons() -> dbc.Row:
         [
             dbc.Col(
                 dbc.Button(
-                    "Odustani", id="button-odustani", n_clicks=0, className="m-1"
+                    "Odustani",
+                    id="button-odustani",
+                    n_clicks=0,
+                    style={
+                        "width": "100%",
+                        "height": "100%",
+                        "padding": "10px",
+                        "border": "1px solid black",
+                        "backgroundColor": "#f8f9fa",  # Off-white color
+                        "color": "black",  # Text color
+                    },
                 ),
-                width=6,
+                width=3,
             ),
             dbc.Col(
-                dbc.Button("Spremi", id="button-spremi", n_clicks=0, className="m-1"),
-                width=6,
+                dbc.Button(
+                    "Spremi",
+                    id="button-spremi",
+                    n_clicks=0,
+                    style={
+                        "width": "100%",
+                        "height": "100%",
+                        "padding": "10px",
+                        "border": "1px solid black",
+                        "backgroundColor": "#A0A7A4",  # Off-white color
+                        "color": "white",  # Text color
+                    },
+                ),
+                width=3,
+            ),
+            dbc.Col(
+                dbc.Button(
+                    "Poništi zvanja",
+                    id="button-reset-extra-points",
+                    n_clicks=0,
+                    style={
+                        "width": "100%",
+                        "height": "100%",
+                        "padding": "10px",
+                        "border": "1px solid black",
+                        "backgroundColor": "#EF9A93",  # Off-white color
+                        "color": "black",  # Text color
+                    },
+                ),
+                width=3,
             ),
         ],
         justify="between",
-        className="my-3",
     )
 
 
