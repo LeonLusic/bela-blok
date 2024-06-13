@@ -30,7 +30,7 @@ def make_zvanja_input() -> dbc.Row:
 
 
 def numpad() -> dbc.Row:
-    def numpad_button(children: str, id: str) -> dbc.Button:
+    def _numpad_button(children: str, id: str) -> dbc.Button:
         return dbc.Button(
             children,
             id=id,
@@ -52,7 +52,7 @@ def numpad() -> dbc.Row:
         for col_number in range(1, 4):
             input_number = 3 * row_number + col_number
             col = dbc.Col(
-                numpad_button(children=str(input_number), id=f"num-{input_number}"),
+                _numpad_button(children=str(input_number), id=f"num-{input_number}"),
                 width=4,
             )
             cols.append(col)
@@ -61,9 +61,9 @@ def numpad() -> dbc.Row:
 
     zero_row = dbc.Row(
         [
-            dbc.Col(numpad_button(children="", id="empty-button"), width=4),
-            dbc.Col(numpad_button(children="0", id="num-0"), width=4),
-            dbc.Col(numpad_button(children="<", id="backspace"), width=4),
+            dbc.Col(_numpad_button(children="", id="empty-button"), width=4),
+            dbc.Col(_numpad_button(children="0", id="num-0"), width=4),
+            dbc.Col(_numpad_button(children="<", id="backspace"), width=4),
         ]
     )
 
