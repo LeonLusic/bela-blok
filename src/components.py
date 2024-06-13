@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 import dash_bootstrap_components as dbc
+from dash import html
 from dash.dependencies import Input
 
 POINTS_INPUTS = [Input(f"num-{index}", "n_clicks") for index in range(10)]
@@ -100,4 +101,55 @@ def numpad() -> dbc.Row:
         rows,
         justify="center",
         className="my-3",
+    )
+
+
+def round_select_buttons() -> dbc.Row:
+    return dbc.Row(
+        [
+            dbc.Col(
+                dbc.Button(
+                    "Odustani", id="button-odustani", n_clicks=0, className="m-1"
+                ),
+                width=6,
+            ),
+            dbc.Col(
+                dbc.Button("Spremi", id="button-spremi", n_clicks=0, className="m-1"),
+                width=6,
+            ),
+        ],
+        justify="between",
+        className="my-3",
+    )
+
+
+def sum_containers() -> dbc.Row:
+    return dbc.Row(
+        [
+            dbc.Col(html.Div(id="sum1", children="Σ 0", className="text-center my-2")),
+            dbc.Col(html.Div(id="sum2", children="Σ 0", className="text-center my-2")),
+        ],
+        justify="center",
+    )
+
+
+def score_containers() -> dbc.Row:
+    return dbc.Row(
+        [
+            dbc.Col(
+                html.Div(
+                    id="container_score_team_a",
+                    children="0",
+                    className="p-3 mb-2 bg-success text-white text-center",
+                )
+            ),
+            dbc.Col(
+                html.Div(
+                    id="container_score_team_b",
+                    children="0",
+                    className="p-3 mb-2 bg-danger text-white text-center",
+                )
+            ),
+        ],
+        justify="center",
     )
