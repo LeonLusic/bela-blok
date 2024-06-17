@@ -123,6 +123,7 @@ def round_select_buttons() -> dbc.Row:
                 dbc.Button(
                     "Spremi",
                     id="button-spremi",
+                    href="/",
                     n_clicks=0,
                     style={
                         "width": "100%",
