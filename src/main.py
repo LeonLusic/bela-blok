@@ -7,7 +7,7 @@ from dash.dependencies import Input, Output, State
 
 import components
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], use_pages=True)
 
 MAX_SCORE = 162
 
@@ -19,11 +19,8 @@ class Team(StrEnum):
 
 app.layout = dbc.Container(
     [
-        components.score_containers(),
-        components.sum_containers(),
-        components.make_zvanja_input(),
-        components.numpad(),
-        components.round_select_buttons(),
+        dash.page_container,
+        dcc.Location(id="url", refresh=False),
         dcc.Store(id="selected_team", data=Team.TEAM_A),
         dcc.Store(id="score_team_a", data=0),
         dcc.Store(id="score_team_b", data=0),

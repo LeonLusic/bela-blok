@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-
 import dash_bootstrap_components as dbc
 from dash import html
 from dash.dependencies import Input
@@ -8,12 +6,6 @@ EXTRA_POINTS_INPUTS = [
     Input(f"button-{num}", "n_clicks") for num in [20, 50, 100, 150, 200]
 ] + [Input("button-štiglja", "n_clicks")]
 POINTS_INPUTS = [Input(f"num-{index}", "n_clicks") for index in range(10)]
-
-
-@dataclass
-class Zvanje:
-    value: int
-    name: str
 
 
 def make_zvanja_input() -> dbc.Row:
@@ -114,6 +106,7 @@ def round_select_buttons() -> dbc.Row:
                 dbc.Button(
                     "Odustani",
                     id="button-odustani",
+                    href="/",
                     n_clicks=0,
                     style={
                         "width": "100%",
