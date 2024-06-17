@@ -1,9 +1,10 @@
+from enum import StrEnum, auto
+
 import dash
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 from dash.dependencies import Input, Output, State
 
-from enum import StrEnum, auto
 import components
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
