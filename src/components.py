@@ -213,3 +213,80 @@ def score_containers() -> dbc.Row:
         ],
         justify="center",
     )
+
+
+def game_summaries() -> html.Div:
+    return html.Div(
+        [
+            dbc.Row(
+                [
+                    dbc.Col(
+                        [
+                            dbc.Badge(
+                                "0",
+                                id="mi-game-wins",
+                                color="success",
+                                className="rounded-circle p-2 mb-1",
+                            ),
+                            html.H2("0", className="mb-0"),
+                            html.Div("MI", className="mt-1"),
+                        ],
+                        className="text-center",
+                    ),
+                    dbc.Col(
+                        [
+                            dbc.Badge(
+                                "0",
+                                id="vi-game-wins",
+                                color="danger",
+                                className="rounded-circle p-2 mb-1",
+                            ),
+                            html.H2("0", className="mb-0"),
+                            html.Div("VI", className="mt-1"),
+                        ],
+                        className="text-center",
+                    ),
+                ],
+                justify="around",
+                className="mb-3",
+            ),
+            html.Div("Oni su pobijedili", className="text-center text-danger my-3"),
+            html.Div(
+                dbc.Button(
+                    "Poništi zadnju rundu", color="link", className="text-muted"
+                ),
+                className="text-center mb-3",
+            ),
+        ]
+    )
+
+
+def current_game_rounds(rounds: list) -> html.Div:
+    def round_summary(round: dict) -> dbc.Row:
+        return dbc.Row(
+            [
+                dbc.Col(
+                    html.Div(round["score_team_a"], className="text-center mb-2"),
+                    className="text-center",
+                ),
+                dbc.Col(
+                    html.Div(
+                        html.Img(src="path_to_image", className="icon"),
+                        className="text-center mb-2",
+                    ),
+                    className="text-center",
+                ),
+                dbc.Col(
+                    html.Div(round["score_team_b"], className="text-center mb-2"),
+                    className="text-center",
+                ),
+            ]
+        )
+
+    html.Div(
+        dbc.Row(
+            [round_summary(round) for round in rounds],
+            justify="around",
+            className="mb-3",
+        )
+    )

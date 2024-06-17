@@ -39,13 +39,13 @@ app.layout = dbc.Container(
     [
         dash.page_container,
         dcc.Location(id="url", refresh=False),
-        dcc.Store(id="rounds", data=[]),
-        dcc.Store(id="games", data=[]),
-        dcc.Store(id="selected_team", data=Team.TEAM_A),
-        dcc.Store(id="score_team_a", data=0),
-        dcc.Store(id="score_team_b", data=0),
-        dcc.Store(id="extra_points_team_a", data=0),
-        dcc.Store(id="extra_points_team_b", data=0),
+        dcc.Store(id="rounds", data=[], storage_type="memory"),
+        dcc.Store(id="games", data=[], storage_type="memory"),
+        dcc.Store(id="selected_team", data=Team.TEAM_A, storage_type="memory"),
+        dcc.Store(id="score_team_a", data=0, storage_type="memory"),
+        dcc.Store(id="score_team_b", data=0, storage_type="memory"),
+        dcc.Store(id="extra_points_team_a", data=0, storage_type="memory"),
+        dcc.Store(id="extra_points_team_b", data=0, storage_type="memory"),
     ],
     fluid=True,
     style={"max-width": "500px", "margin": "0 auto", "padding": "20px"},
@@ -55,6 +55,7 @@ app.layout = dbc.Container(
 @app.callback(
     [Output("mi-game-wins", "children"), Output("vi-game-wins", "children")],
     Input("games", "data"),
+    prevent_initial_call=True,
 )
 def update_round_wins(games: list[Game]) -> tuple[int, int]:
     team_a_wins = sum(1 for game in games if game.winner_team_index == 0)
@@ -172,7 +173,7 @@ def update_extra_points(
     inputs: list[Input], current_extra_scores: list[State], selected_team: str
 ) -> tuple[int, int]:
     ctx = dash.callback_context
-    app.logger.info(current_extra_scores)
+    # app.logger.info(current_extra_scores)
     # if ctx.triggered[0]["value"] is None:
     #     return 0, 0
 
@@ -295,6 +296,12 @@ def save_round(
     rounds: list[Round],
     n_clicks: int,
 ) -> None:
+    app.logger.info("Current scores:")
+    app.logger.info(scores)
+    app.logger.info("Current extra points:")
+    app.logger.info(extra_scores)
+    app.logger.info("Rounds")
+    app.logger.info(rounds)
     if sum(scores) == 0:
         return dash.no_update
 
@@ -302,6 +309,23 @@ def save_round(
     rounds.append(round.__dict__)
 
     return rounds, n_clicks + 1
+
+
+@app.callback(
+    Output("game-summaries-container", "children"),
+    Input("rounds", "data"),
+    State("rounds", "data"),
+    prevent_initial_call=True,
+)
+def update_home_layout(new_rounds: list, old_rounds: list) -> html.Div:
+    app.logger.info(new_rounds)
+    app.logger.info(old_rounds)
+    app.logger.info("AAAAAAAAAAAAAAAAAAA")
+
+    if new_rounds == []:
+        return components.game_summaries()
+
+    return components.current_game_rounds(new_rounds)
 
 
 if __name__ == "__main__":
